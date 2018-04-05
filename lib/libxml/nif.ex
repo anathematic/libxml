@@ -2,7 +2,9 @@ defmodule Libxml.Nif do
   @on_load :load_nif
 
   def load_nif() do
-    :ok = :erlang.load_nif(:code.lib_dir(:libxml) ++ '/priv/libxml_nif', 0)
+    # path = :code.lib_dir(:libxml) ++ '/priv/libxml_nif'
+    path = "/app/deps/libxml/priv/libxml2/lib/libxml_nif"
+    :ok = :erlang.load_nif(path, 0)
   end
 
   def xml_read_memory(_contents), do: raise("NIF not implemented")
