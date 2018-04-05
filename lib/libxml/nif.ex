@@ -1,9 +1,10 @@
 defmodule Libxml.Nif do
-  @on_load :load_nif
+  @on_load { :load_nif, 0 }
+
+  app = Mix.Project.config[:app]
 
   def load_nif() do
-    # path = :code.lib_dir(:libxml) ++ '/priv/libxml_nif'
-    path = "/app/deps/libxml/priv/libxml2/lib/libxml_nif"
+    path = :filename.join(:code.priv_dir(unquote(app)), "libxml_nif")
     :ok = :erlang.load_nif(path, 0)
   end
 
