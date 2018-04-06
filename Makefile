@@ -9,7 +9,10 @@ ifeq ($(shell uname),Darwin)
 endif
 
 priv/libxml_nif.so: src/libxml_nif.c priv/libxml2/lib/libxml2.a
-	cc -O2 -fPIC -std=c99 -Wall -I$(ERL_INCLUDE_PATH) -Ipriv/libxml2/include/libxml2 -Lpriv/libxml2/lib -shared priv/libxml2/include/libxml2/libxml/parser.h priv/libxml2/include/libxml2/libxml/tree.h priv/libxml2/include/libxml2/libxml/c14n.h priv/libxml2/include/libxml2/libxml/xmlschemas.h $(LDFLAGS) -o $@ src/libxml_nif.c priv/libxml2/lib/libxml2.a
+	echo "**** Compiling"
+	if cc -O2 -fPIC -std=c99 -Wall -I$(ERL_INCLUDE_PATH) -Ipriv/libxml2/include/libxml2/libxml -Lpriv/libxml2/lib -shared priv/libxml2/include/libxml2/libxml/parser.h priv/libxml2/include/libxml2/libxml/tree.h priv/libxml2/include/libxml2/libxml/c14n.h priv/libxml2/include/libxml2/libxml/xmlschemas.h $(LDFLAGS) -o $@ src/libxml_nif.c priv/libxml2/lib/libxml2.a; then echo "***** WORKING"; else echo "*** NOPEEEE"; fi
+	if [ ! -f priv/libxml_nif.so ]; then echo "**** NOT FOUND"; fi
+	echo "**** Finished compilng"
 
 priv/libxml2/lib/libxml2.a:
 	@rm -rf libxml2_build
@@ -22,10 +25,3 @@ priv/libxml2/lib/libxml2.a:
 		&& ./configure --prefix=`pwd`/../../priv/libxml2 --with-pic --without-python \
 		&& make -j2 \
 		&& make install
-	@rm -rf libxml2_build
-
-clean:
-	@rm -rf libxml2_build
-	@rm -rf priv/libxml2
-	@rm -rf priv/libxml_nif.so
-	@rm -rf _build

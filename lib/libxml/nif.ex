@@ -1,12 +1,28 @@
 defmodule Libxml.Nif do
-  @on_load { :load_nif, 0 }
+  @on_load { :init, 0 }
 
-  app = Mix.Project.config[:app]
-
-  def load_nif() do
-    path = :filename.join(:code.priv_dir(unquote(app)), "libxml_nif")
-    :ok = :erlang.load_nif(path, 0)
+  def init do
+    :ok = :erlang.load_nif(nif_path(), 0)
   end
+
+  defp nif_path,
+    do: :filename.join(priv_dir(), 'libxml_nif')
+
+  defp priv_dir do
+    :cmark
+    |> :code.priv_dir
+    |> maybe_priv_dir
+  end
+
+  defp maybe_priv_dir({:error, _}) do
+    :cmark
+    |> :code.which
+    |> :filename.dirname
+    |> :filename.dirname
+    |> :filename.join('priv')
+  end
+  defp maybe_priv_dir(path),
+    do: path
 
   def xml_read_memory(_contents), do: raise("NIF not implemented")
   def xml_copy_doc(_doc, _recursive), do: raise("NIF not implemented")
